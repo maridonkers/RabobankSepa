@@ -3,7 +3,7 @@
 ;; Converts Rabobank SEPA CSV-file format (as exported by Rabobank
 ;; internet banking) to an KMyMoney importable format.
 ;;
-;; Version 0.1.2
+;; Version 0.1.3
 ;;
 ;; DISCLAIMER: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 ;; CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -94,8 +94,8 @@
   (let [[_ _ _ _ _ tegenrekening naar-naam _ _ _ & info] cvs
         [_ _ _ _ _ _ end-to-end-id id-tegenrekeninghouder mandaat-id] info
 
-        omschr1 (first info)
         omschr (drop-last 3 info)
+        omschr1 (first omschr)
         omschr (rest omschr)
         
         omschr (->> omschr
