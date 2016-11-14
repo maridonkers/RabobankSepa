@@ -3,7 +3,7 @@
 ;; Converts Rabobank SEPA CSV-file format (as exported by Rabobank
 ;; internet banking) to an KMyMoney importable format.
 ;;
-;; Version 0.1.7
+;; Version 0.1.8
 ;;
 ;; DISCLAIMER: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 ;; CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -59,27 +59,31 @@
 ;; 19	MANDAAT_ID			Alfanumeriek	35	SEPA Direct Debet: Kenmerk machtiging
 ;;
 
-(s/def ::iban (s/and string? #(<= (count %) 35)))
+(s/def ::iban (s/and string?
+                     #(<= (count %) 35)
+                     (s/or :empty #(not= seq %)
+                           :bban #(re-matches #"(?i)[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}" %))))
+(s/def ::comment-field (s/and string? #(<= (count %) 35)))
 
 (s/def ::rekeningnummer-rekeninghouder ::iban)
 (s/def ::muntsoort (s/and string? #(<= (count %) 3)))
 (s/def ::rentedatum (s/and string? #(re-matches #"[0-9]{8}" %)))
-(s/def ::bij-af-code (s/and string? #(= (count %) 1) (s/or :debit #(= % "D") :credit #(= % "C"))))
+(s/def ::bij-af-code (s/and string? #(= (count %) 1) #(re-matches #"(?i)[CD]{1}" %)))
 (s/def ::bedrag (s/and string? #(<= (count %) 14) #(re-matches #"[0-9]+\.[0-9]{2}" %)))
 (s/def ::tegenrekening ::iban)
 (s/def ::naar-naam (s/and string? #(<= (count %) 70)))
 (s/def ::boekdatum (s/and string? #(re-matches #"[0-9]{8}" %)))
 (s/def ::boekcode (s/and string? #(<= (count %) 2)))
 (s/def ::filler (s/and string? #(<= (count %) 6)))
-(s/def ::omschr1 (s/and string? #(<= (count %) 35)))
-(s/def ::omschr2 (s/and string? #(<= (count %) 35)))
-(s/def ::omschr3 (s/and string? #(<= (count %) 35)))
-(s/def ::omschr4 (s/and string? #(<= (count %) 35)))
-(s/def ::omschr5 (s/and string? #(<= (count %) 35)))
-(s/def ::omschr6 (s/and string? #(<= (count %) 35)))
-(s/def ::end-to-end-id (s/and string? #(<= (count %) 35)))
-(s/def ::id-tegenrekeninghouder (s/and string? #(<= (count %) 35)))
-(s/def ::mandaat-id (s/and string? #(<= (count %) 35)))
+(s/def ::omschr1 ::comment-field)
+(s/def ::omschr2 ::comment-field)
+(s/def ::omschr3 ::comment-field)
+(s/def ::omschr4 ::comment-field)
+(s/def ::omschr5 ::comment-field)
+(s/def ::omschr6 ::comment-field)
+(s/def ::end-to-end-id ::comment-field)
+(s/def ::id-tegenrekeninghouder ::comment-field)
+(s/def ::mandaat-id ::comment-field)
 
 (s/def ::sepa-columns (s/cat :1 ::rekeningnummer-rekeninghouder
                              :2 ::muntsoort
