@@ -3,7 +3,7 @@
 ;; Converts Rabobank SEPA CSV-file format (as exported by Rabobank
 ;; internet banking) to an KMyMoney importable format.
 ;;
-;; Version 0.2.0
+;; Version 0.2.1
 ;;
 ;; DISCLAIMER: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 ;; CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -63,7 +63,7 @@
                      #(<= (count %) 35)
                      (s/or :empty #(= (count %) 0)
                            :bban #(re-matches #"(?i)P?[0-9]+" %)
-                           :iban #(re-matches #"(?i)[A-Z]{2}[0-9]{2}[A-Z0-9]{4,30}" %))))
+                           :iban #(re-matches #"(?i)[A-Z]{2}[0-9]{2}[A-Z0-9]{4,}" %))))
 (s/def ::comment-field (s/and string? #(<= (count %) 35)))
 
 (s/def ::rekeningnummer-rekeninghouder ::iban)
