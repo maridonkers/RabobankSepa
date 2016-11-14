@@ -3,7 +3,7 @@
 ;; Converts Rabobank SEPA CSV-file format (as exported by Rabobank
 ;; internet banking) to an KMyMoney importable format.
 ;;
-;; Version 0.1.3
+;; Version 0.1.4
 ;;
 ;; DISCLAIMER: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 ;; CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -24,8 +24,8 @@
 (ns rabobank.sepa
   (:require [clojure.string :as str]))
 
-;; ------------------
-;; JAVASCRIPT INTEROP
+;; ---------------
+;; NODE.JS INTEROP
 
 (def fs (js/require "fs"))
 (def path (js/require "path"))
@@ -74,7 +74,7 @@
 ;;
 ;; The OMSCHRIJVING (Memo) field in the output is a concatenation of
 ;; fields 11 to 16 plus space separated fields 17 to 19 from the SEPA
-;; input.
+;; input. The decimal point in the amounts is replaced with a comma.
 ;;
 
 ;; Set with output filenames, which is used to delete existing files
