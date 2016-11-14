@@ -3,7 +3,7 @@
 ;; Converts Rabobank SEPA CSV-file format (as exported by Rabobank
 ;; internet banking) to an KMyMoney importable format.
 ;;
-;; Version 0.1.5
+;; Version 0.1.6
 ;;
 ;; DISCLAIMER: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 ;; CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -145,10 +145,13 @@
         base (.basename path fname ext)
         ofname (str base "#" rekeningnummer-rekeninghouder ext)]
 
-    (when (and (not (contains? @output-fnames ofname))
-               (.existsSync fs ofname))
-      (do (swap! output-fnames conj ofname)
-        (.unlinkSync fs ofname)))
+    (when (and (.existsSync fs ofname)
+               (not (contains? @output-fnames ofname)))
+      (do (.unlinkSync fs ofname)))
+
+    ;; If the file already existed it was deleted and if didn't exist
+    ;; it was also okay. So always add it to the set of output-fnames.
+    (swap! output-fnames conj ofname)
 
     (.appendFile fs
                  ofname
