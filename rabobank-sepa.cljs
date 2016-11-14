@@ -3,7 +3,7 @@
 ;; Converts Rabobank SEPA CSV-file format (as exported by Rabobank
 ;; internet banking) to an KMyMoney importable format.
 ;;
-;; Version 0.1.6
+;; Version 0.1.7
 ;;
 ;; DISCLAIMER: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 ;; CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -22,7 +22,8 @@
 ;; Twitter: @maridonkers | Google+: +MariDonkers | GitHub: maridonkers
 ;;
 (ns rabobank.sepa
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [clojure.spec :as s]))
 
 ;; ---------------
 ;; NODE.JS INTEROP
@@ -58,6 +59,48 @@
 ;; 19	MANDAAT_ID			Alfanumeriek	35	SEPA Direct Debet: Kenmerk machtiging
 ;;
 
+(s/def ::iban (s/and string? #(<= (count %) 35)))
+
+(s/def ::rekeningnummer-rekeninghouder ::iban)
+(s/def ::muntsoort (s/and string? #(<= (count %) 3)))
+(s/def ::rentedatum (s/and string? #(re-matches #"[0-9]{8}" %)))
+(s/def ::bij-af-code (s/and string? #(= (count %) 1) (s/or :debit #(= % "D") :credit #(= % "C"))))
+(s/def ::bedrag (s/and string? #(<= (count %) 14) #(re-matches #"[0-9]+\.[0-9]{2}" %)))
+(s/def ::tegenrekening ::iban)
+(s/def ::naar-naam (s/and string? #(<= (count %) 70)))
+(s/def ::boekdatum (s/and string? #(re-matches #"[0-9]{8}" %)))
+(s/def ::boekcode (s/and string? #(<= (count %) 2)))
+(s/def ::filler (s/and string? #(<= (count %) 6)))
+(s/def ::omschr1 (s/and string? #(<= (count %) 35)))
+(s/def ::omschr2 (s/and string? #(<= (count %) 35)))
+(s/def ::omschr3 (s/and string? #(<= (count %) 35)))
+(s/def ::omschr4 (s/and string? #(<= (count %) 35)))
+(s/def ::omschr5 (s/and string? #(<= (count %) 35)))
+(s/def ::omschr6 (s/and string? #(<= (count %) 35)))
+(s/def ::end-to-end-id (s/and string? #(<= (count %) 35)))
+(s/def ::id-tegenrekeninghouder (s/and string? #(<= (count %) 35)))
+(s/def ::mandaat-id (s/and string? #(<= (count %) 35)))
+
+(s/def ::sepa-columns (s/cat :1 ::rekeningnummer-rekeninghouder
+                             :2 ::muntsoort
+                             :3 ::rentedatum
+                             :4 ::bij-af-code
+                             :5 ::bedrag
+                             :6 ::tegenrekening
+                             :7 ::naar-naam
+                             :8 ::boekdatum
+                             :9 ::boekcode
+                             :10 ::filler
+                             :11 ::omschr1
+                             :12 ::omschr2
+                             :13 ::omschr3
+                             :14 ::omschr4
+                             :15 ::omschr5
+                             :16 ::omschr6
+                             :17 ::end-to-end-id
+                             :18 ::id-tegenrekeninghouder
+                             :19 ::mandaat-id))
+
 ;; ---------
 ;; KYMYMONEY
 ;;
@@ -81,11 +124,15 @@
 ;; only once.
 (def output-fnames (atom #{}))
 
-(defn get-csvs
+(defn get-csv-columns
   "Gets CSV columns as vector. The enclosing quotes are
   removed. Nested quotes are not allowed in Rabobank SEPA."
   [csv-line]
-  (map second (re-seq #"\"([^\"]*)\"" csv-line)))
+  (let [columns (map second (re-seq #"\"([^\"]*)\"" csv-line))]
+    
+    (when-not (s/valid? ::sepa-columns columns)
+      (println (str "\t" (s/explain ::sepa-columns columns))))
+    columns))
 
 (defn  convert-description
   "Converts description."
@@ -139,7 +186,7 @@
   "Converts CSV line. Appends to output file (determined by account
   number in first column: inputfilename#accountnumber.csv)."
   [fname csv-line]
-  (let [csv (get-csvs csv-line)
+  (let [csv (get-csv-columns csv-line)
         rekeningnummer-rekeninghouder (first csv)
         ext (.extname path fname)
         base (.basename path fname ext)
