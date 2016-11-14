@@ -3,7 +3,7 @@
 ;; Converts Rabobank SEPA CSV-file format (as exported by Rabobank
 ;; internet banking) to an KMyMoney importable format.
 ;;
-;; Version 0.1.4
+;; Version 0.1.5
 ;;
 ;; DISCLAIMER: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 ;; CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -100,19 +100,19 @@
         
         omschr (->> omschr
                     (map str/trim)
-                    (cons (when-not (= 0 (count naar-naam)) omschr1))
-                    (filter #(not= 0 (count %)))
+                    (cons (when (seq naar-naam) omschr1))
+                    (filter #(seq %))
                     (apply str)
                     str/trim)
         
         extra (->> [end-to-end-id id-tegenrekeninghouder mandaat-id]
                    (map str/trim)
                    (interpose " ")
-                   (filter #(not= 0 (count %)))
+                   (filter #(seq %))
                    (apply str)
                    str/trim)]
 
-    (str (when-not (empty? tegenrekening) (str "[" tegenrekening "] "))
+    (str (when (seq tegenrekening) (str "[" tegenrekening "] "))
          (str omschr " " extra))))
 
 (defn convert-columns
@@ -126,7 +126,7 @@
                 (if (= "D" bij-af-code) bedrag "")
                 (if (= "C" bij-af-code) bedrag "")
                 boekcode
-                (if (empty? naar-naam) omschr1 naar-naam)
+                (if-not (seq naar-naam) omschr1 naar-naam)
                 (convert-description csv)]]
 
     (str (->> result
@@ -147,8 +147,8 @@
 
     (when (and (not (contains? @output-fnames ofname))
                (.existsSync fs ofname))
-      (do (.unlinkSync fs ofname)
-          (swap! output-fnames conj ofname)))
+      (do (swap! output-fnames conj ofname)
+        (.unlinkSync fs ofname)))
 
     (.appendFile fs
                  ofname
