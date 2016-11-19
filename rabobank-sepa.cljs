@@ -3,7 +3,7 @@
 ;; Converts Rabobank SEPA CSV-file format (as exported by Rabobank
 ;; internet banking) to an KMyMoney importable format.
 ;;
-;; Version 0.2.2
+;; Version 0.2.3
 ;;
 ;; DISCLAIMER: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 ;; CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -76,12 +76,7 @@
 (s/def ::boekdatum (s/and string? #(re-matches #"[0-9]{8}" %)))
 (s/def ::boekcode (s/and string? #(<= (count %) 2)))
 (s/def ::filler (s/and string? #(<= (count %) 6)))
-(s/def ::omschr1 ::comment-field)
-(s/def ::omschr2 ::comment-field)
-(s/def ::omschr3 ::comment-field)
-(s/def ::omschr4 ::comment-field)
-(s/def ::omschr5 ::comment-field)
-(s/def ::omschr6 ::comment-field)
+(s/def ::omschr ::comment-field)
 (s/def ::end-to-end-id ::comment-field)
 (s/def ::id-tegenrekeninghouder ::comment-field)
 (s/def ::mandaat-id ::comment-field)
@@ -96,12 +91,12 @@
                              :8 ::boekdatum
                              :9 ::boekcode
                              :10 ::filler
-                             :11 ::omschr1
-                             :12 ::omschr2
-                             :13 ::omschr3
-                             :14 ::omschr4
-                             :15 ::omschr5
-                             :16 ::omschr6
+                             :11 ::omschr
+                             :12 ::omschr
+                             :13 ::omschr
+                             :14 ::omschr
+                             :15 ::omschr
+                             :16 ::omschr
                              :17 ::end-to-end-id
                              :18 ::id-tegenrekeninghouder
                              :19 ::mandaat-id))
@@ -139,7 +134,7 @@
       (println (str "\t" (s/explain ::sepa-columns columns))))
     columns))
 
-(defn  convert-description
+(defn convert-description
   "Converts description."
   [cvs]
 
@@ -151,7 +146,6 @@
         omschr (rest omschr)
         
         omschr (->> omschr
-                    (map str/trim)
                     (cons (when (seq naar-naam) omschr1))
                     (filter #(seq %))
                     (apply str)
@@ -165,7 +159,7 @@
                    str/trim)]
 
     (str (when (seq tegenrekening) (str "[" tegenrekening "] "))
-         (str omschr " " extra))))
+         (str omschr (when (seq extra)" ") extra))))
 
 (defn convert-columns
   "Converts columns in input CSV line to columns in output CSV line."
@@ -206,10 +200,11 @@
     ;; it was also okay. So always add it to the set of output-fnames.
     (swap! output-fnames conj ofname)
 
-    (.appendFile fs
-                 ofname
-                 (convert-columns csv)
-                 (fn [err] (when err (println "***ERROR***"))))
+    (.appendFileSync fs
+                     ofname
+                     (convert-columns csv)
+                     (fn [err] (when err (println "***ERROR***"))))
+
     rekeningnummer-rekeninghouder))
 
 (defn convert
