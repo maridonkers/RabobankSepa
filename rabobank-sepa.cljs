@@ -3,7 +3,7 @@
 ;; Converts Rabobank SEPA CSV-file format (as exported by Rabobank
 ;; internet banking) to an KMyMoney importable format.
 ;;
-;; Version 0.2.3
+;; Version 0.2.4
 ;;
 ;; DISCLAIMER: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 ;; CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -34,30 +34,6 @@
 
 ;; -------------
 ;; RABOBANK SEPA
-;;
-;; Beschrijving invoerformaat (Rabobank SEPA CSV-bestand)
-;;
-;; Veld	Omschrijving			Type		Lengte	Inhoud/Toelichting
-;; 1	REKENINGNUMMER_REKENINGHOUDER	Alfanumeriek	35	Eigen Rekeningnummer in IBAN formaat
-;; 2	MUNTSOORT			Alfanumeriek	3	EUR
-;; 3	RENTEDATUM			Numeriek	8	Formaat: EEJJMMDD
-;; 4	BY_AF_CODE			Alfanumeriek	1	D of C
-;; 5	BEDRAG				Numeriek	14	2 decimalen. Decimalen worden weergegeven met een punt
-;; 6	TEGENREKENING			Alfanumeriek	35	Tegenrekeningnummer
-;; 7	NAAR_NAAM			Alfanumeriek	70	Naam van de tegenrekeninghouder
-;; 8	BOEKDATUM			Numeriek	8	Formaat: EEJJMMDD
-;; 9	BOEKCODE			Alfanumeriek	2	Type transactie
-;; 10	FILLER				Alfanumeriek	6	
-;; 11	OMSCHR1				Alfanumeriek	35	
-;; 12	OMSCHR2				Alfanumeriek	35	
-;; 13	OMSCHR3				Alfanumeriek	35	
-;; 14	OMSCHR4				Alfanumeriek	35	
-;; 15	OMSCHR5				Alfanumeriek	35	
-;; 16	OMSCHR6				Alfanumeriek	35	
-;; 17	END_TO_END_ID			Alfanumeriek	35	SEPA Credit Transfer: Kenmerk opgegeven door de opdrachtgever
-;; 18	ID_TEGENREKENINGHOUDER		Alfanumeriek	35	SEPA Credit Transfer: Identificatie van de tegenrekeninghouder
-;; 19	MANDAAT_ID			Alfanumeriek	35	SEPA Direct Debet: Kenmerk machtiging
-;;
 
 (s/def ::iban (s/and string?
                      #(<= (count %) 35)
@@ -67,39 +43,70 @@
 (s/def ::comment-field (s/and string? #(<= (count %) 35)))
 
 (s/def ::rekeningnummer-rekeninghouder ::iban)
+
 (s/def ::muntsoort (s/and string? #(<= (count %) 3)))
+
 (s/def ::rentedatum (s/and string? #(re-matches #"[0-9]{8}" %)))
+
 (s/def ::bij-af-code (s/and string? #(= (count %) 1) #(re-matches #"(?i)[CD]{1}" %)))
+
 (s/def ::bedrag (s/and string? #(<= (count %) 14) #(re-matches #"[0-9]+\.[0-9]{2}" %)))
+
 (s/def ::tegenrekening ::iban)
+
 (s/def ::naar-naam (s/and string? #(<= (count %) 70)))
+
 (s/def ::boekdatum (s/and string? #(re-matches #"[0-9]{8}" %)))
+
 (s/def ::boekcode (s/and string? #(<= (count %) 2)))
+
 (s/def ::filler (s/and string? #(<= (count %) 6)))
+
 (s/def ::omschr ::comment-field)
 (s/def ::end-to-end-id ::comment-field)
 (s/def ::id-tegenrekeninghouder ::comment-field)
 (s/def ::mandaat-id ::comment-field)
 
-(s/def ::sepa-columns (s/cat :1 ::rekeningnummer-rekeninghouder
-                             :2 ::muntsoort
-                             :3 ::rentedatum
-                             :4 ::bij-af-code
-                             :5 ::bedrag
-                             :6 ::tegenrekening
-                             :7 ::naar-naam
-                             :8 ::boekdatum
-                             :9 ::boekcode
-                             :10 ::filler
-                             :11 ::omschr
-                             :12 ::omschr
-                             :13 ::omschr
-                             :14 ::omschr
-                             :15 ::omschr
-                             :16 ::omschr
-                             :17 ::end-to-end-id
-                             :18 ::id-tegenrekeninghouder
-                             :19 ::mandaat-id))
+;; Veld	Omschrijving			Type		Lengte	Inhoud/Toelichting
+(s/def ::sepa-columns (s/cat
+;; 1	REKENINGNUMMER_REKENINGHOUDER	Alfanumeriek	35	Eigen Rekeningnummer in IBAN formaat
+   :1 ::rekeningnummer-rekeninghouder
+;; 2	MUNTSOORT			Alfanumeriek	3	EUR
+   :2 ::muntsoort
+;; 3	RENTEDATUM			Numeriek	8	Formaat: EEJJMMDD
+   :3 ::rentedatum
+;; 4	BY_AF_CODE			Alfanumeriek	1	D of C
+   :4 ::bij-af-code
+;; 5	BEDRAG				Numeriek	14	2 decimalen. Decimalen worden weergegeven met een punt
+   :5 ::bedrag
+;; 6	TEGENREKENING			Alfanumeriek	35	Tegenrekeningnummer
+   :6 ::tegenrekening
+;; 7	NAAR_NAAM			Alfanumeriek	70	Naam van de tegenrekeninghouder
+   :7 ::naar-naam
+;; 8	BOEKDATUM			Numeriek	8	Formaat: EEJJMMDD
+   :8 ::boekdatum
+;; 9	BOEKCODE			Alfanumeriek	2	Type transactie
+   :9 ::boekcode
+;; 10	FILLER				Alfanumeriek	6	
+   :10 ::filler
+;; 11	OMSCHR1				Alfanumeriek	35	
+   :11 ::omschr
+;; 12	OMSCHR2				Alfanumeriek	35	
+   :12 ::omschr
+;; 13	OMSCHR3				Alfanumeriek	35	
+   :13 ::omschr
+;; 14	OMSCHR4				Alfanumeriek	35	
+   :14 ::omschr
+;; 15	OMSCHR5				Alfanumeriek	35	
+   :15 ::omschr
+;; 16	OMSCHR6				Alfanumeriek	35	
+   :16 ::omschr
+;; 17	END_TO_END_ID			Alfanumeriek	35	SEPA Credit Transfer: Kenmerk opgegeven door de opdrachtgever
+   :17 ::end-to-end-id
+;; 18	ID_TEGENREKENINGHOUDER		Alfanumeriek	35	SEPA Credit Transfer: Identificatie van de tegenrekeninghouder
+   :18 ::id-tegenrekeninghouder
+;; 19	MANDAAT_ID			Alfanumeriek	35	SEPA Direct Debet: Kenmerk machtiging
+   :19 ::mandaat-id))
 
 ;; ---------
 ;; KYMYMONEY
