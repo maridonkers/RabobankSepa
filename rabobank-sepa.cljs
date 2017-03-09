@@ -3,7 +3,7 @@
 ;; Converts Rabobank SEPA CSV-file format (as exported by Rabobank
 ;; internet banking) to an KMyMoney importable format.
 ;;
-;; Version 0.2.4
+;; Version 0.2.5
 ;;
 ;; DISCLAIMER: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 ;; CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -184,7 +184,7 @@
                 (convert-description csv)]]
 
     (str (->> result
-              (map #(str "\"" % "\""))
+              (map #(str "\"" (if (empty? %) " " %) "\""))
               (interpose ",")
               (apply str))
          "\n")))
