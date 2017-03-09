@@ -6,4 +6,4 @@ Download link: https://raw.githubusercontent.com/maridonkers/RabobankSepa/master
 
 It's a command line program, which can be executed via Lumo ( https://github.com/anmonteiro/lumo ).
 
-Also see blog article: http://www.maridonkers.info/posts-output/2016-11-13-rabobank-sepa-csv-to-kmymoney/
+Also see blog article: http://www.photonsphere.org/posts-output/2016-11-13-rabobank-sepa-csv-to-kmymoney/
