@@ -3,7 +3,7 @@
 ;; Converts Rabobank SEPA CSV-file format (as exported by Rabobank
 ;; internet banking) to an KMyMoney importable format.
 ;;
-;; Version 0.2.5
+;; Version 0.2.6
 ;;
 ;; DISCLAIMER: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 ;; CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -195,22 +195,21 @@
   [fname csv-line]
   (let [csv (get-csv-columns csv-line)
         rekeningnummer-rekeninghouder (first csv)
-        ext (.extname path fname)
-        base (.basename path fname ext)
+        ext (path.extname fname)
+        base (path.basename fname ext)
         ofname (str base "#" rekeningnummer-rekeninghouder ext)]
 
-    (when (and (.existsSync fs ofname)
+    (when (and (fs.existsSync ofname)
                (not (contains? @output-fnames ofname)))
-      (do (.unlinkSync fs ofname)))
+      (do (fs.unlinkSync ofname)))
 
     ;; If the file already existed it was deleted and if didn't exist
     ;; it was also okay. So always add it to the set of output-fnames.
     (swap! output-fnames conj ofname)
 
-    (.appendFileSync fs
-                     ofname
-                     (convert-columns csv)
-                     (fn [err] (when err (println "***ERROR***"))))
+    (fs.appendFileSync ofname
+                       (convert-columns csv)
+                       (fn [err] (when err (println "***ERROR***"))))
 
     rekeningnummer-rekeninghouder))
 
@@ -227,7 +226,7 @@
 (let [[_ _ _ & fnames] (.-argv process)]
   (doseq [fname fnames]
     (println (str fname ":"))
-    (let [lines (.readFileSync fs fname "utf8")
+    (let [lines (fs.readFileSync fname "utf8")
           accounts (distinct (convert fname lines))]
 
       (println (str "\t"
