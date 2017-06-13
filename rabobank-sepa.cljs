@@ -3,7 +3,7 @@
 ;; Converts Rabobank SEPA CSV-file format (as exported by Rabobank
 ;; internet banking) to an KMyMoney importable format.
 ;;
-;; Version 0.2.6
+;; Version 0.2.7
 ;;
 ;; DISCLAIMER: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 ;; CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -23,7 +23,7 @@
 ;;
 (ns rabobank.sepa
   (:require [clojure.string :as str]
-            [clojure.spec :as s]))
+            [clojure.spec.alpha :as s]))
 
 ;; ---------------
 ;; NODE.JS INTEROP
