@@ -3,7 +3,7 @@
 ;; Converts Rabobank SEPA CSV-file format (as exported by Rabobank
 ;; internet banking) to an KMyMoney importable format.
 ;;
-;; Version 0.2.8
+;; Version 0.2.9
 ;;
 ;; DISCLAIMER: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 ;; CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -172,7 +172,7 @@
   "Converts columns in input CSV line to columns in output CSV line."
   [csv]
 
-  (let [[_ _ boekdatum bij-af-code bedrag _ naar-naam _ boekcode _ omschr1] csv
+  (let [[_ _ _ bij-af-code bedrag _ naar-naam boekdatum boekcode _ omschr1] csv
         bedrag (str/replace bedrag "." ",")
         bij-af-code (str/upper-case bij-af-code)
         result [""
