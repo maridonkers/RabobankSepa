@@ -101,12 +101,6 @@
 ;;TODO Check this one (it's numeric without +/- ?)
 (s/def ::koers (s/and string? #(<= (count %) 11)))
 
-;; (s/def ::end-to-end-id ::comment-field)
-;; (s/def ::id-tegenrekeninghouder ::comment-field)
-;; (s/def ::mandaat-id ::comment-field)
-
-;; NIEUW FORMAAT
-;;
 ;; "IBAN/BBAN","Munt","BIC","Volgnr","Datum","Rentedatum","Bedrag","Saldo na trn","Tegenrekening IBAN/BBAN","Naam tegenpartij","Naam uiteindelijke partij","Naam initiërende partij","BIC tegenpartij","Code","Batch ID","Transactiereferentie","Machtigingskenmerk","Incassant ID","Betalingskenmerk","Omschrijving-1","Omschrijving-2","Omschrijving-3","Reden retour","Oorspr bedrag","Oorspr munt","Koers"
 
 ;; Veld	Omschrijving			Type		Lengte	Inhoud/Toelichting
@@ -163,32 +157,6 @@
    :25 ::oorspr-munt
 ;; 26	KOERS		                Alfanumeriek	11
    :26 ::koers
-   
-;; 4	BY_AF_CODE			Alfanumeriek	1	D of C
-   ;; :4 ::bij-af-code
-
-;; 8	BOEKDATUM			Numeriek	8	Formaat: EEJJMMDD
-   ;; :8 ::boekdatum
-;; 10	FILLER				Alfanumeriek	6	
-   ;; :10 ::filler
-;; 11	OMSCHR1				Alfanumeriek	35	
-   ;; :11 ::omschr
-;; 12	OMSCHR2				Alfanumeriek	35	
-   ;; :12 ::omschr
-;; 13	OMSCHR3				Alfanumeriek	35	
-   ;; :13 ::omschr
-;; 14	OMSCHR4				Alfanumeriek	35	
-   ;; :14 ::omschr
-;; 15	OMSCHR5				Alfanumeriek	35	
-   ;; :15 ::omschr
-;; 16	OMSCHR6				Alfanumeriek	35	
-   ;; :16 ::omschr
-;; 17	END_TO_END_ID			Alfanumeriek	35	SEPA Credit Transfer: Kenmerk opgegeven door de opdrachtgever
-   ;; :17 ::end-to-end-id
-;; 18	ID_TEGENREKENINGHOUDER		Alfanumeriek	35	SEPA Credit Transfer: Identificatie van de tegenrekeninghouder
-   ;; :18 ::id-tegenrekeninghouder
-;; 19	MANDAAT_ID			Alfanumeriek	35	SEPA Direct Debet: Kenmerk machtiging
-   ;; :19 ::mandaat-id
 ))
 
 ;; ---------
