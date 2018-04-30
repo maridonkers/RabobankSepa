@@ -39,7 +39,6 @@
 ;; RABOBANK SEPA
 
 (def DATE-REGEXP #"[0-9]{4}-[0-9]{2}-[0-9]{2}")
-;;TODO check/complete these.
 (def BBAN-REGEXP #"(?i)P?[0-9]+")
 (def IBAN-REGEXP #"(?i)[A-Z]{2}[0-9]{2}[A-Z0-9]{4,}")
 (def AMOUNT-REGEXP #"[+-][0-9]+,?[0-9]*")
@@ -63,15 +62,12 @@
 
 (s/def ::rentedatum ::datum)
 
-;; (s/def ::bij-af-code (s/and string? #(= (count %) 1) #(re-matches #"(?i)[CD]{1}" %)))
-
 (s/def ::bedrag (s/and string? #(<= (count %) 18) #(re-matches AMOUNT-REGEXP %)))
 
 (s/def ::saldo ::bedrag)
 
 (s/def ::naam (s/and string? #(<= (count %) 70)))
 
-;;TODO Check why this BIC is 15 instead of 11 chars.
 (s/def ::bic-tegenpartij (s/and string? #(<= (count %) 15)))
 
 (s/def ::code (s/and string? #(<= (count %) 4)))
@@ -86,19 +82,14 @@
 
 (s/def ::betalingskenmerk (s/and string? #(<= (count %) 35)))
 
-;; (s/def ::filler (s/and string? #(<= (count %) 6)))
-
 (s/def ::omschrijving (s/and string? #(<= (count %) 140)))
 
 (s/def ::reden-retour (s/and string? #(<= (count %) 75)))
 
-;;TODO Check this one (it's numeric without +/- ?)
 (s/def ::oorspr-bedrag (s/and string? #(<= (count %) 18)))
 
-;;TODO Check this (spec says 11 chars but ::muntsoort only has 4 chars?)
 (s/def ::oorspr-munt (s/and string? #(<= (count %) 11)))
 
-;;TODO Check this one (it's numeric without +/- ?)
 (s/def ::koers (s/and string? #(<= (count %) 11)))
 
 ;; "IBAN/BBAN","Munt","BIC","Volgnr","Datum","Rentedatum","Bedrag","Saldo na trn","Tegenrekening IBAN/BBAN","Naam tegenpartij","Naam uiteindelijke partij","Naam initiërende partij","BIC tegenpartij","Code","Batch ID","Transactiereferentie","Machtigingskenmerk","Incassant ID","Betalingskenmerk","Omschrijving-1","Omschrijving-2","Omschrijving-3","Reden retour","Oorspr bedrag","Oorspr munt","Koers"
