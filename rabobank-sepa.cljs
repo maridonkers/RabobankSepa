@@ -62,10 +62,29 @@
 
 (s/def ::filler (s/and string? #(<= (count %) 6)))
 
+<<<<<<< HEAD
 (s/def ::omschr ::comment-field)
 (s/def ::end-to-end-id ::comment-field)
 (s/def ::id-tegenrekeninghouder ::comment-field)
 (s/def ::mandaat-id ::comment-field)
+=======
+;;TODO Check this one (it's numeric without +/- ?)
+(s/def ::oorspr-bedrag (s/and string? #(<= (count %) 18)))
+
+;;TODO Check this (spec says 11 chars but ::muntsoort only has 4 chars?)
+(s/def ::oorspr-munt (s/and string? #(<= (count %) 11)))
+
+;;TODO Check this one (it's numeric without +/- ?)
+(s/def ::koers (s/and string? #(<= (count %) 11)))
+
+;; (s/def ::end-to-end-id ::comment-field)
+;; (s/def ::id-tegenrekeninghouder ::comment-field)
+;; (s/def ::mandaat-id ::comment-field)
+
+;; NIEUW FORMAAT
+;;
+;; "IBAN/BBAN","Munt","BIC","Volgnr","Datum","Rentedatum","Bedrag","Saldo na trn","Tegenrekening IBAN/BBAN","Naam tegenpartij","Naam uiteindelijke partij","Naam initiërende partij","BIC tegenpartij","Code","Batch ID","Transactiereferentie","Machtigingskenmerk","Incassant ID","Betalingskenmerk","Omschrijving-1","Omschrijving-2","Omschrijving-3","Reden retour","Oorspr bedrag","Oorspr munt","Koers"
+>>>>>>> e8e6317... Fixes.
 
 ;; Veld	Omschrijving			Type		Lengte	Inhoud/Toelichting
 (s/def ::sepa-columns (s/cat
