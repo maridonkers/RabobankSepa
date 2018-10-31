@@ -6,7 +6,9 @@
 ;; https://www.rabobank.nl/images/formaatbeschrijving-csv-extensie_29933458.pdf
 ;; https://www.rabobank.nl/images/transactiesoortcodes_29842987.pdf
 ;;
-;; Version 0.3.0
+;; Version 0.3.2
+;;
+;; Requires Lumo -- https://github.com/anmonteiro/lumo
 ;;
 ;; DISCLAIMER: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
 ;; CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -224,10 +226,10 @@
          code
          _ _ _ _ _ _ _ _ _ _ _ _] csv
         
-        result [volgnr
+        result ["" #_volgnr
                 datum
                 bedrag
-                code
+                "" #_code
                 naam-tegenpartij
                 (convert-description csv)]]
 
